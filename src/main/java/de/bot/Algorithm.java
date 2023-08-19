@@ -6,15 +6,16 @@ import java.util.List;
 
 public class Algorithm {
 
-
-
     /**
      *
-     * @param list
-     * @param searchedNumber
+     * @param list of integers which is used to find a number
+     * @param searchedNumber which could be in the list
      * @return position of searched number
      */
     public static int binarySearch(List<Integer> list, int searchedNumber){
+       if(list == null){
+           throw new NullPointerException();
+       }
         if(!list.isEmpty()){
             Collections.sort(list);
             int leftBorder = 0;
@@ -41,6 +42,9 @@ public class Algorithm {
      * @return a sorted list
      */
     public static List<Integer> selectionSort(List<Integer> list){
+        if(list == null){
+            throw new NullPointerException();
+        }
         int lowestNumber = 0;
         int position = 0;
 
@@ -69,6 +73,9 @@ public class Algorithm {
      * @return a sorted list
      */
     public static List<Integer> insertionSort(List<Integer> list){
+        if(list == null){
+            throw new NullPointerException();
+        }
         List<Integer> newList = new LinkedList<>();
         int compareNumber = 0;
         int position = 0;
@@ -94,6 +101,9 @@ public class Algorithm {
      * @return a sorted list
      */
     public static List<Integer> bubbleSort(List<Integer> list){
+        if(list == null){
+            throw new NullPointerException();
+        }
         boolean newChange;
         for(int i = list.size()-1; i >0 ; i--){
             newChange = false;
@@ -118,6 +128,9 @@ public class Algorithm {
      * @param b
      */
     public static void changeNumbers(List<Integer> list, int a, int b){
+        if(list == null){
+            throw new NullPointerException();
+        }
         if(a==b){
             return;
         }
@@ -134,6 +147,9 @@ public class Algorithm {
      * @return a sorted list
      */
     public static List<Integer> mergeSort(List<Integer> list){
+        if(list == null){
+            throw new NullPointerException();
+        }
         if(list.size() <= 1){
             return list;
         }else{
@@ -153,6 +169,7 @@ public class Algorithm {
      * @return the sorted list
      */
     public static List<Integer> merge(List<Integer> leftList, List<Integer> rightList){
+
         List<Integer> newList = new LinkedList<>();
         int leftIndex = 0;
         int rightIndex = 0;
@@ -185,6 +202,9 @@ public class Algorithm {
      * @return a sorted list
      */
     public static List<Integer> quickSort(List<Integer> list, int low, int high){
+        if(list == null){
+            throw new NullPointerException();
+        }
         if(low < high){
             int pivotIndex = part(list, low, high);
             quickSort(list, low, pivotIndex - 1);
@@ -232,6 +252,9 @@ public class Algorithm {
      * @return list of integers which are in the string
      */
     public static List<Integer> getStringAsList(String list){
+        if(list == null){
+            throw new NullPointerException();
+        }
         if(!list.isEmpty()){
             List<Integer> numbers = new LinkedList<>();
             String value = "";
@@ -259,6 +282,9 @@ public class Algorithm {
      */
 
     public static String getListAsString(List<Integer> list){
+        if(list == null){
+            throw new NullPointerException();
+        }
         String numbers = "";
         for(int i=0; i< list.size(); i++){
             numbers += list.get(i) + " ";
