@@ -235,6 +235,8 @@ public class Algorithm {
             }
             if (list.get(i) > list.get(j)){
                 changeNumbers(list, i, j);
+                i++;
+                j--;
             }
         }
 
