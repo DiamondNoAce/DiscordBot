@@ -1,5 +1,8 @@
 package de.bot;
 
+
+import jakarta.persistence.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -161,10 +164,99 @@ public class MyListener extends ListenerAdapter {
         getMergeSortSteps(event, content);
         randomNumberGenerator(event, content);
         getCommandList(event, content);
-
+        addMemberToMemberList(event, content);
+        deleteMemberOnList(event, content);
+        getMembersList(event, content);
 
     }
 
+    private void getMembersList(MessageReceivedEvent event, String content) {
+        if(content.startsWith("!membersList")){
+            EntityManagerFactory factory = Persistence.createEntityManagerFactory("default");
+            EntityManager entityManager = factory.createEntityManager();
+            String jplq = "SELECT member FROM Member member";
+            TypedQuery<entity.Member> query = entityManager.createQuery(jplq, entity.Member.class);
+            List<entity.Member> members = query.getResultList();
+            event.getChannel().sendMessage(" ID |  Name  |  Age  ").queue();
+            for(int i = 0; i < members.size() ; i++){
+                event.getChannel().sendMessage(members.get(i).getIdmember() + "  |  " + members.get(i).getName() +  "  |  " + members.get(i).getAge()).queue();
+            }
+            entityManager.close();
+            factory.close();
+        }
+    }
+
+    private void deleteMemberOnList(MessageReceivedEvent event, String content) {
+        String memberName = event.getAuthor().getName();
+        if(content.startsWith("!delete")){
+            if(!isMemberInList(memberName)){
+                event.getChannel().sendMessage("Du bist nicht auf der Liste!").queue();
+            }else{
+                EntityManagerFactory factory = Persistence.createEntityManagerFactory("default");
+                EntityManager entityManager = factory.createEntityManager();
+                String jplq = "SELECT member FROM Member member WHERE member.name = :name";
+                TypedQuery<entity.Member> query = entityManager.createQuery(jplq, entity.Member.class);
+                query.setParameter("name", memberName);
+                List<entity.Member> members = query.getResultList();
+                EntityTransaction transaction = entityManager.getTransaction();
+                transaction.begin();
+                entityManager.remove(members.get(0));
+                transaction.commit();
+                entityManager.close();
+                factory.close();
+                event.getChannel().sendMessage("Du wurdest entfernt!").queue();
+            }
+        }
+    }
+
+    /**
+     * add a member to database member if he is not on list already
+     * @param event
+     * @param content
+     */
+    private void addMemberToMemberList(MessageReceivedEvent event, String content) {
+        List<Integer> age =  Algorithm.getStringAsList(content);
+        if(content.startsWith("!add")){
+            if(age.isEmpty()){
+                event.getChannel().sendMessage("Ich brauche dein Alter!");
+                return;
+            }
+            if(isMemberInList(event.getAuthor().getName())){
+                event.getChannel().sendMessage("Du bist schon auf der Liste!").queue();
+            }else {
+                EntityManagerFactory factory = Persistence.createEntityManagerFactory("default");
+                EntityManager entityManager = factory.createEntityManager();
+                entity.Member member = new entity.Member();
+                member.setName(event.getAuthor().getName());
+                member.setAge(age.get(0));
+                EntityTransaction transaction = entityManager.getTransaction();
+                transaction.begin();
+                entityManager.merge(member);
+                transaction.commit();
+                entityManager.close();
+                factory.close();
+                event.getChannel().sendMessage("Du wurdest hinzugefügt!").queue();
+            }
+
+        }
+    }
+
+
+    private static boolean isMemberInList(String memberName){
+        EntityManagerFactory factory = Persistence.createEntityManagerFactory("default");
+        EntityManager entityManager = factory.createEntityManager();
+        String jplq = "SELECT name FROM Member WHERE name = :name";
+        TypedQuery<entity.Member> query = entityManager.createQuery(jplq, entity.Member.class);
+        query.setParameter("name", memberName);
+        List<entity.Member> members = query.getResultList();
+        entityManager.close();
+        factory.close();
+        if (!members.isEmpty()){
+            return true;
+        }else {
+            return false;
+        }
+    }
     /**
      * bot describes his skills
      * @param event
