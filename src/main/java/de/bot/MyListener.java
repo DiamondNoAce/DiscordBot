@@ -1,8 +1,6 @@
 package de.bot;
 
-
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
@@ -15,9 +13,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
-import static de.bot.Algorithm.getListAsString;
-import static de.bot.Algorithm.getStringAsList;
 
 
 public class MyListener extends ListenerAdapter {
@@ -35,8 +30,6 @@ public class MyListener extends ListenerAdapter {
         }catch (NullPointerException n){
             System.out.println("Member is null");
         }
-
-
     }
 
     /**
@@ -170,6 +163,11 @@ public class MyListener extends ListenerAdapter {
 
     }
 
+    /**
+     * bot sends a list of members who added themselves to database
+     * @param event
+     * @param content
+     */
     private void getMembersList(MessageReceivedEvent event, String content) {
         if(content.startsWith("!membersList")){
             EntityManagerFactory factory = Persistence.createEntityManagerFactory("default");
@@ -186,6 +184,11 @@ public class MyListener extends ListenerAdapter {
         }
     }
 
+    /**
+     * removes a member from the database if he is already on list
+     * @param event
+     * @param content
+     */
     private void deleteMemberOnList(MessageReceivedEvent event, String content) {
         String memberName = event.getAuthor().getName();
         if(content.startsWith("!delete")){
@@ -241,7 +244,11 @@ public class MyListener extends ListenerAdapter {
         }
     }
 
-
+    /**
+     *
+     * @param memberName
+     * @return true if a member is in the database
+     */
     private static boolean isMemberInList(String memberName){
         EntityManagerFactory factory = Persistence.createEntityManagerFactory("default");
         EntityManager entityManager = factory.createEntityManager();
@@ -269,6 +276,9 @@ public class MyListener extends ListenerAdapter {
                     "!insertionsort ´liste´ -> sortiert und zeigt die Schritte der Sortierung für die eingegebene Liste \n" +
                     "!bubblesort ´liste´ -> sortiert und zeigt die Schritte der Sortierung für die eingegebene Liste \n" +
                     "!mergesort ´liste´ -> sortiert und zeigt die merge Schritte der Sortierung für die eingegebene Liste \n" +
+                    "!add ´age´ -> fügt dich auf die exklusive Member Liste hinzu  \n" +
+                    "!remove -> enfernt dich von der exklusiven Member Liste  \n" +
+                    "!memberList -> zeigt die exklusive Member Liste  \n" +
                     "Desweiteren kann ich auf manche Bilder und " +
                     "Videos reagieren, wenn ich anhand des Titels etwas lustiges oder trauriges erkennen und natürlich auch Leute begrüßen. " +
                     "Für die Rollenverteilung im Channel Farbe bin ich auch verantwortlich. Gelegentlich grüße ich auch Leute. ").queue();
